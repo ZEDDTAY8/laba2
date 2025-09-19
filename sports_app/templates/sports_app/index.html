@@ -24,7 +24,7 @@
         
         <section class="settings-form">
             <h2>Настройте приложение</h2>
-            <form method="post" action="{% url 'save_settings' %}">
+            <form method="post" action="{% url 'sports_app:save_settings' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="favorite_team">Выберите любимую команду:</label>
@@ -88,6 +88,14 @@
                     <li>{{ league.name }} - {{ league.sport }}</li>
                     {% endfor %}
                 </ul>
+            </div>
+
+            <div class="sports-images">
+                <h3>Спортивные изображения</h3>
+                <div class="image-gallery">
+                    <img src="{% static 'sports_app/images/BL.jpg' %}" alt="Спорт 1">
+                    <img src="{% static 'sports_app/images/HY.jpg' %}" alt="Спорт 2">
+                </div>
             </div>
         </section>
     </main>
