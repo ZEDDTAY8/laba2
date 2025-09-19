@@ -68,7 +68,7 @@ def index(request):
 
 def save_settings(request):
     if request.method == 'POST':
-        response = redirect('index')
+        response = redirect('sports_app:index')
         
         # Сохраняем настройки в cookies
         response.set_cookie('favorite_team', request.POST.get('favorite_team'), max_age=365*24*60*60)
