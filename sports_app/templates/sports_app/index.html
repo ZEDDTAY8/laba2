@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спортивное приложение для фанатов</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'sports_app/style.css' %}">
+</head>
+
+<body class="{{ theme }}">
+    <header>
+        <h1>Приложение для спортивных фанатов</h1>
+    </header>
+    
+    <main>
+        <section class="user-settings">
+            <h2>Ваши настройки</h2>
+            <p>Любимая команда: <strong>{{ favorite_team }}</strong></p>
+            <p>Любимая лига: <strong>{{ favorite_league }}</strong></p>
+            <p>Тема: <strong>{{ theme }}</strong></p>
+            <p>Язык: <strong>{{ language }}</strong></p>
+        </section>
+        
+        <section class="settings-form">
+            <h2>Настройте приложение</h2>
+            <form method="post" action="{% url 'save_settings' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="favorite_team">Выберите любимую команду:</label>
+                    <select name="favorite_team" id="favorite_team">
+                        <option value="Не выбрана">Не выбрана</option>
+                        {% for team in teams %}
+                        <option value="{{ team.name }}">{{ team.name }} ({{ team.sport }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="favorite_league">Выберите любимую лигу:</label>
+                    <select name="favorite_league" id="favorite_league">
+                        <option value="Не выбрана">Не выбрана</option>
+                        {% for league in leagues %}
+                        <option value="{{ league.name }}">{{ league.name }} ({{ league.sport }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="theme">Выберите тему:</label>
+                    <select name="theme" id="theme">
+                        <option value="light">Светлая</option>
+                        <option value="dark">Темная</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="language">Выберите язык:</label>
+                    <select name="language" id="language">
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                
+                <button type="submit">Сохранить настройки</button>
+            </form>
+        </section>
+        
+        <section class="content">
+            <h2>Спортивный контент</h2>
+            <div class="teams">
+                <h3>Популярные команды</h3>
+                <div class="team-cards">
+                    {% for team in teams %}
+                    <div class="team-card">
+                        <h4>{{ team.name }}</h4>
+                        <p>Вид спорта: {{ team.sport }}</p>
+                        <p>Страна: {{ team.country }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="leagues">
+                <h3>Популярные лиги</h3>
+                <ul>
+                    {% for league in leagues %}
+                    <li>{{ league.name }} - {{ league.sport }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
