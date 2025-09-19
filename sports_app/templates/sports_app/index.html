@@ -1,69 +1,38 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Спортивное приложение для фанатов</title>
-    {% load static %}
+    <title>Sports Fan App</title>
     <link rel="stylesheet" href="{% static 'sports_app/style.css' %}">
 </head>
-
 <body class="{{ theme }}">
     <header>
-        <h1>Приложение для спортивных фанатов</h1>
+        <h1>Настрой любимые спортивные команды</h1>
+        <div class="header-settings">
+            <form method="post" action="{% url 'sports_app:save_settings' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="theme">Тема:</label>
+                    <select name="theme" id="theme" onchange="this.form.submit()">
+                        <option value="light" {% if theme == 'light' %}selected{% endif %}>Светлая</option>
+                        <option value="dark" {% if theme == 'dark' %}selected{% endif %}>Тёмная</option>
+                    </select>
+                </div>
+            </form>
+        </div>
     </header>
     
     <main>
         <section class="user-settings">
             <h2>Ваши настройки</h2>
-            <p>Любимая команда: <strong>{{ favorite_team }}</strong></p>
-            <p>Любимая лига: <strong>{{ favorite_league }}</strong></p>
-            <p>Тема: <strong>{{ theme }}</strong></p>
-            <p>Язык: <strong>{{ language }}</strong></p>
-        </section>
-        
-        <section class="settings-form">
-            <h2>Настройте приложение</h2>
-            <form method="post" action="{% url 'sports_app:save_settings' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="favorite_team">Выберите любимую команду:</label>
-                    <select name="favorite_team" id="favorite_team">
-                        <option value="Не выбрана">Не выбрана</option>
-                        {% for team in teams %}
-                        <option value="{{ team.name }}">{{ team.name }} ({{ team.sport }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="favorite_league">Выберите любимую лигу:</label>
-                    <select name="favorite_league" id="favorite_league">
-                        <option value="Не выбрана">Не выбрана</option>
-                        {% for league in leagues %}
-                        <option value="{{ league.name }}">{{ league.name }} ({{ league.sport }})</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="theme">Выберите тему:</label>
-                    <select name="theme" id="theme">
-                        <option value="light">Светлая</option>
-                        <option value="dark">Темная</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="language">Выберите язык:</label>
-                    <select name="language" id="language">
-                        <option value="ru">Русский</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                
-                <button type="submit">Сохранить настройки</button>
-            </form>
+            <div class="settings-image">
+                <img src="{% static 'sports_app/images/HY.jpg' %}" alt="Настройки">
+            </div>
+            <p>Любимые команды: <strong>{% if favorite_teams %}{{ favorite_teams|join:", " }}{% else %}Не выбраны{% endif %}</strong></p>
+            <p>Любимые лиги: <strong>{% if favorite_leagues %}{{ favorite_leagues|join:", " }}{% else %}Не выбраны{% endif %}</strong></p>
+            <p>Тема: <strong>{{ theme_display }}</strong></p>
         </section>
         
         <section class="content">
@@ -76,6 +45,14 @@
                         <h4>{{ team.name }}</h4>
                         <p>Вид спорта: {{ team.sport }}</p>
                         <p>Страна: {{ team.country }}</p>
+                        <p>Лига: {{ team.league }}</p>
+                        <form method="post" action="{% url 'sports_app:toggle_favorite_team' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="team_name" value="{{ team.name }}">
+                            <button type="submit" class="favorite-btn {% if team.name in favorite_teams %}active{% endif %}">
+                                {% if team.name in favorite_teams %}Убрать из любимых{% else %}Любимая{% endif %}
+                            </button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
@@ -85,20 +62,24 @@
                 <h3>Популярные лиги</h3>
                 <ul>
                     {% for league in leagues %}
-                    <li>{{ league.name }} - {{ league.sport }}</li>
+                    <li>
+                        {{ league.name }} - {{ league.sport }}
+                        <form method="post" action="{% url 'sports_app:toggle_favorite_league' %}" style="display:inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="league_name" value="{{ league.name }}">
+                            <button type="submit" class="favorite-btn {% if league.name in favorite_leagues %}active{% endif %}">
+                                {% if league.name in favorite_leagues %}Убрать из любимых{% else %}Любимая{% endif %}
+                            </button>
+                        </form>
+                    </li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <div class="sports-images">
-                <h3>Спортивные изображения</h3>
-                <div class="image-gallery">
-                    <img src="{% static 'sports_app/images/BL.jpg' %}" alt="Спорт 1">
-                    <img src="{% static 'sports_app/images/HY.jpg' %}" alt="Спорт 2">
-                </div>
+            <div class="image-gallery">
+                <img src="{% static 'sports_app/images/BL.jpg' %}" alt="Команда 1">
             </div>
         </section>
     </main>
-
 </body>
 </html>
