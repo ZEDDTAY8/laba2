@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
 
 # Данные о командах
 TEAMS = [
@@ -47,5 +48,34 @@ LEAGUES = [
     {'id': 11, 'name': 'Лига 1', 'sport': 'Футбол'},
     {'id': 12, 'name': 'Фикшн', 'sport': 'Разный'},
 ]
+
+def index(request):
+    # Получаем настройки из cookies
+    favorite_team = request.COOKIES.get('favorite_team', 'Не выбрана')
+    favorite_league = request.COOKIES.get('favorite_league', 'Не выбрана')
+    theme = request.COOKIES.get('theme', 'light')
+    language = request.COOKIES.get('language', 'ru')
+    
+    context = {
+        'teams': TEAMS,
+        'leagues': LEAGUES,
+        'favorite_team': favorite_team,
+        'favorite_league': favorite_league,
+        'theme': theme,
+        'language': language,
+    }
+    return render(request, 'sports_app/index.html', context)
+
+def save_settings(request):
+    if request.method == 'POST':
+        response = redirect('index')
+        
+        # Сохраняем настройки в cookies
+        response.set_cookie('favorite_team', request.POST.get('favorite_team'), max_age=365*24*60*60)
+        response.set_cookie('favorite_league', request.POST.get('favorite_league'), max_age=365*24*60*60)
+        response.set_cookie('theme', request.POST.get('theme'), max_age=365*24*60*60)
+        response.set_cookie('language', request.POST.get('language'), max_age=365*24*60*60)
+        
+        return response
 
 # Create your views here.
