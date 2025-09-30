@@ -8,3 +8,10 @@ Django-приложение для спортивных фанатов с воз
 - Выбор любимой команды и лиги
 - Настройка темы оформления (светлая/тёмная)
 - Сохранение настроек в cookies
+
+## Установка
+1. Клонируйте репозиторий: `git clone https://github.com/ZEDDTAY8/laba2.git`
+2. Создайте виртуальное окружение: `python -m venv venv`
+3. Активируйте: `venv\Scripts\activate`
+4. Установите зависимости: `pip install -r requirements.txt`
+5. Запустите сервер: `python manage.py runserver
